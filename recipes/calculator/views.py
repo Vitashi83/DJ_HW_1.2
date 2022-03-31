@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from django.conf import settings
-from django.http import HttpResponse
+# from django.http import HttpResponse
 
 DATA = {
     'omlet': {
@@ -31,14 +31,25 @@ DATA = {
 #   }
 # }
 
+
 def calc_reciept(request, dish):
-    msg = DATA[dish]
-    quantity = request.GET.get('servings', 1)
-    print(msg.keys())
-    dictonary = {}
-    for i in msg.keys():
-        dictonary[i] = msg[i] * int(quantity)
-    result = ';<br> '.join([f'{key}: {value}' for key, value in dictonary.items()])
-    return HttpResponse(str(result))
+    quantity = int(request.GET.get('servings', 1))
+    dish = DATA.get(dish).copy()
+    for key, value in dish.items():
+        dish[key] = value * quantity
+    context = {
+        'dish': dish,
+        'servings': quantity
+    }
+    return render(request, "calculator/index.html", context)
 
 
+# def calc_reciept(request, dish):
+#     msg = DATA[dish]
+#     quantity = request.GET.get('servings', 1)
+#     print(msg.keys())
+#     dictonary = {}
+#     for i in msg.keys():
+#         dictonary[i] = msg[i] * int(quantity)
+#     result = ';<br> '.join([f'{key}: {value}' for key, value in dictonary.items()])
+#     return HttpResponse(result)
